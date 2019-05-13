@@ -10,34 +10,37 @@ def meta_loader(absolute_path, name_ext):
     :param name_ext: Filename extension (String)
     :return meta_dict: Metadata stored in a dictionary. PATH to a file is the KEY and it includes HEADERS and FILENAME
     """
-    headers = "asd7;asd2:asd89"   # just for testing
     meta_dict = {}
     for root, dirs, files in os.walk(absolute_path):
         for f in files:
             if name_ext in f:
-                meta_dict[os.path.join(root, f)] = {'filename': f, 'headers': headers}
+                meta_dict[os.path.join(root, f)] = {'filename': f}
     return meta_dict
 
 
-def load_headers(meta_dict):
+def load_headers(meta_dict, regex):
 
     for path in meta_dict:
         file_obj = open(path, 'r')
-        headers = file_obj.readline().rstrip().split(';')
+        headers = file_obj.readline().rstrip().split(regex)
         meta_dict[path].update({'headers': headers})
         file_obj.close()
     return meta_dict
 
 
-def load_types(meta_dict):
+def load_types(meta_dict, regex):
 
     for path in meta_dict:
         types = []
         file_obj = open(path, 'r')
         next(file_obj)   # Skipping headers
-        first_line = file_obj.readline().rstrip().split(';')
+        first_line = file_obj.readline().rstrip().split(regex)
         for member in first_line:
-            types.append(type(ast.literal_eval(member)).__name__)
+            try:
+                types.append(type(ast.literal_eval(member)).__name__)
+            except ValueError:
+                types.append("Unknown")
+                # Prompt Logger
         meta_dict[path].update({'types': types})
         file_obj.close()
     return meta_dict
