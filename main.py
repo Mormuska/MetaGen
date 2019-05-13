@@ -12,3 +12,4 @@ for f in meta_dict.keys():
     print(meta_dict[f].get('headers'))
     print("Data types: ", end="")
     print(meta_dict[f].get('types'), end="\n")
+#meta_save(meta_dict, Path)

@@ -42,9 +42,15 @@ def load_types(meta_dict):
         file_obj.close()
     return meta_dict
 
-def meta_save(meta_dict, absolute_path):
-
-
-
-    print("Metadata saved into %s", absolute_path)
-    return
+#
+# def meta_save(meta_dict, absolute_path, name="\Meta_data.csv", append=False):
+#     path = absolute_path + name
+#     if append:
+#         file_obj = open(path, 'a')
+#     else:
+#         file_obj = open(path, 'w')
+#     file_obj.write('asd;absolute_path')
+#
+#     file_obj.close()
+#     print("Metadata saved into %s", path)
+#     return
