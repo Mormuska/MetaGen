@@ -1,8 +1,6 @@
 from utils import *
-#Path = "C:\\Users\\nblomber\\PycharmProjects\\MetaGen\\testi"
 Path = "D:\\Data\\V4InputV4.0.2-UNSW"
 
-#Logger and try loop for files
 name_ext = '.csv'
 regex = ','
 meta_dict = meta_loader(Path)
