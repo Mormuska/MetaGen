@@ -16,13 +16,9 @@ meta_dict = load_headers(meta_dict, regex, name_ext)
 meta_dict = load_types(meta_dict, regex, name_ext)
 
 # printing to console
-for f in meta_dict.keys():
-    print("\nPath: " + f + "\nFilename: " + meta_dict[f].get('filename') + "\nHeaders: ", end="")
-    print(meta_dict[f].get('headers'))
-    print("Data types: ", end="")
-    print(meta_dict[f].get('types'), end="\n")
-print(len(meta_dict.keys()))
-
+print_on_console(meta_dict)
 # Saving to a file
-meta_save(meta_dict, "D:\\Data")
+meta_save(meta_dict, "C:\\Users\\nblomber")
 
+selected_list = ["Scenario-Population", "Scenario-Employment", "BaseYearMatrix\External"]
+selected_dict = make_header_list(meta_dict, selected_list, "C:\\Users\\nblomber")

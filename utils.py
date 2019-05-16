@@ -15,6 +15,7 @@ def meta_loader(absolute_path):
     for root, dirs, files in os.walk(absolute_path):
         for f in files:
             meta_dict[os.path.join(root, f)] = {'filename': f}
+            meta_dict[os.path.join(root, f)].update({'folder': root})
 
     return meta_dict
 
@@ -87,19 +88,19 @@ def meta_save(meta_dict, absolute_path, name="\\Meta_data.csv", append=False):
     file_obj.write("Metadata list\n")
     file_obj.write('Listed files: %d' % len(meta_dict.keys()))
     file_obj.write('\n')
+    file_obj.write('Path;Name;Headers;\n')
     for path in meta_dict:
         file_obj.write('\n')
-        file_obj.write('Path;Name;Headers;\n')
         try:
             file_obj.write('%s;%s;%s\n' % (path, meta_dict[path].get('filename'), (';'.join(meta_dict[path].get('headers')))))
             file_obj.write(';;%s\n' % (';'.join(meta_dict[path].get('types'))))
         except TypeError:
             file_obj.write('%s;%s;None\n' % (path, meta_dict[path].get('filename')))
     file_obj.close()
-    print("Metadata saved into %s", path)
+    print("Metadata saved into %s", (absolute_path + name))
     return
 
-def make_header_list(meta_dir, selected_files, output_name):
+def make_header_list(meta_dict, selected_files, absolute_path, output_name="\\Selected_data.txt"):
     """
     Makes a header list from selected files. This way other programs can import necessary headers easily.
 
@@ -108,5 +109,34 @@ def make_header_list(meta_dir, selected_files, output_name):
     :output_name: Output file name (String)
     :return:
     """
+    selected_dict = {}
+    for path in meta_dict:
+        for folder in selected_files:
+            if folder in meta_dict[path].get('folder'):
+                selected_dict[path] = (meta_dict[path])
 
+    path = absolute_path + output_name
+    file_obj = open(path, 'w')
+    for path in selected_dict:
+        if 'headers' in selected_dict[path]:
+            file_obj.write(selected_dict[path].get('filename'))
+            file_obj.write('\n')
+            for header in selected_dict[path].get('headers'):
+                file_obj.write(header)
+                file_obj.write('\n')
+
+    file_obj.close()
+    return selected_dict
+
+
+def print_on_console(meta_dict):
+    """
+    Prints important properties from a dictionary to console
+    """
+    for f in meta_dict.keys():
+        print("\nPath: " + f + "\nFilename: " + meta_dict[f].get('filename') + "\nHeaders: ", end="")
+        print(meta_dict[f].get('headers'))
+        print("Data types: ", end="")
+        print(meta_dict[f].get('types'), end="\n")
+    print("\nTOTAL FILES:  %d" % len(meta_dict.keys()))
     return
