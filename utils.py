@@ -122,10 +122,9 @@ def make_header_list(meta_dict, selected_files, absolute_path, output_name="\\Se
     for path in selected_dict:
         if 'headers' in selected_dict[path]:
             file_obj.write(selected_dict[path].get('filename'))
-            file_obj.write('\n')
             for header in selected_dict[path].get('headers'):
-                file_obj.write(header)
-                file_obj.write('\n')
+                file_obj.write("," + header)
+            file_obj.write('\n')
 
     file_obj.close()
     print("\nMetadata saved into %s", (absolute_path + output_name))
