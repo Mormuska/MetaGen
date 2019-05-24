@@ -16,10 +16,10 @@ meta_dict = load_headers(meta_dict, separator, name_ext)
 meta_dict = load_types(meta_dict, separator, name_ext)
 
 # printing to console
-#print_on_console(meta_dict)
+# print_on_console(meta_dict)
 
 # Saving to a file
 meta_save(meta_dict, "C:\\Users\\nblomber")
 
-selected_list = ["Scenario-Population", "Scenario-Employment", "BaseYearMatrix\External"]
+selected_list = ["Scenario-Population", "Scenario-Employment", "BaseYearMatrix\\External"]
 selected_dict = make_header_list(meta_dict, selected_list, "C:\\Users\\nblomber")

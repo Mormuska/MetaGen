@@ -14,9 +14,11 @@ def meta_loader(absolute_path):
     meta_dict = {}
     for root, dirs, files in os.walk(absolute_path):
         for f in files:
-            meta_dict[os.path.join(root, f)] = {'filename': f}
-            meta_dict[os.path.join(root, f)].update({'folder': root})
-
+            full_path = os.path.join(root, f)
+            relative_path = full_path.replace(absolute_path, "")
+            meta_dict[full_path] = {'filename': f}
+            meta_dict[full_path].update({'folder': root})
+            meta_dict[full_path].update({'relative path': relative_path})
     return meta_dict
 
 
@@ -28,7 +30,6 @@ def load_headers(meta_dict, separator, name_ext):
     :param meta_dict:
     :param separator: data splitting between these. e.g ','  (String)
     :param name_ext: target file extension. e.g '.csv'  (String)
-    :param absolute_path: Absolute path to input  (String)
     :return meta_dict: Metadata stored in a dictionary. PATH to a file is the KEY and it includes HEADERS and FILENAME
     """
 
@@ -54,7 +55,7 @@ def load_types(meta_dict, separator, name_ext):
         if path.endswith(name_ext):
             types = []
             file_obj = open(path, 'r')
-            next(file_obj)   # Skipping headers
+            next(file_obj)  # Skipping headers
             first_line = file_obj.readline().rstrip().split(separator)
             for member in first_line:
                 try:
@@ -93,7 +94,8 @@ def meta_save(meta_dict, absolute_path, name="\\Meta_data.csv", append=False):
         file_obj.write('\n')
         if 'headers' in meta_dict[path]:
             try:
-                file_obj.write('%s;%s;%s\n' % (path, meta_dict[path].get('filename'), (';'.join(meta_dict[path].get('headers')))))
+                file_obj.write(
+                    '%s;%s;%s\n' % (path, meta_dict[path].get('filename'), (';'.join(meta_dict[path].get('headers')))))
                 file_obj.write(';;%s\n' % (';'.join(meta_dict[path].get('types'))))
             except TypeError:
                 exit("ERROR: Can't recognise  header or type of the file in %s" % path)
@@ -102,13 +104,16 @@ def meta_save(meta_dict, absolute_path, name="\\Meta_data.csv", append=False):
     print("TOTAL FILES:  %d" % len(meta_dict.keys()))
     return
 
-def make_header_list(meta_dict, selected_files, absolute_path, output_name="\\Selected_data.txt"):
+
+def make_header_list(meta_dict, selected_files, absolute_path, output_name="\\data.txt"):
     """
-    Makes a header list from selected files. This way other programs can import necessary headers easily.
+    Makes a header list from selected files and relative paths. This way other programs can import necessary headers
+    easily.
 
     :param meta_dict: Metadata stored in a dictionary. PATH to a file is the KEY and it includes HEADERS and FILENAME
     :param selected_files: folder names for selected files e.g '\\C:\\Data\\selected' (String)
-    :output_name: Output file name (String)
+    :param absolute_path: Absolute path to output. MUST BE DIFFERENT THAN INPUT!  (String)
+    :param output_name: Output file name (String)
     :return:
     """
     selected_dict = {}
@@ -122,6 +127,7 @@ def make_header_list(meta_dict, selected_files, absolute_path, output_name="\\Se
     for path in selected_dict:
         if 'headers' in selected_dict[path]:
             file_obj.write(selected_dict[path].get('filename'))
+            file_obj.write("," + selected_dict[path].get('relative path'))
             for header in selected_dict[path].get('headers'):
                 file_obj.write("," + header)
             file_obj.write('\n')
