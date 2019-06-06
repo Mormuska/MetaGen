@@ -105,10 +105,12 @@ def meta_save(meta_dict, absolute_path, name="\\Meta_data.csv", append=False):
     return
 
 
-def make_header_list(meta_dict, selected_files, absolute_path, output_name="\\data.txt"):
+def make_header_list(meta_dict, selected_files, absolute_path, output_name="\\config.txt"):
     """
     Makes a header list from selected files and relative paths. This way other programs can import necessary headers
     easily.
+
+    OUTPUT FORMAT: Absolute_path,Relative_path,header:placement:table (repeating for all headers)
 
     :param meta_dict: Metadata stored in a dictionary. PATH to a file is the KEY and it includes HEADERS and FILENAME
     :param selected_files: folder names for selected files e.g '\\C:\\Data\\selected' (String)
@@ -116,12 +118,15 @@ def make_header_list(meta_dict, selected_files, absolute_path, output_name="\\da
     :param output_name: Output file name (String)
     :return:
     """
+    # Paths to selected files
     selected_dict = {}
     for path in meta_dict:
         for folder in selected_files:
             if folder in meta_dict[path].get('folder'):
                 selected_dict[path] = (meta_dict[path])
 
+    # Writing out everything and counting header appearances
+    headers = []
     path = absolute_path + output_name
     file_obj = open(path, 'w')
     for path in selected_dict:
@@ -129,9 +134,13 @@ def make_header_list(meta_dict, selected_files, absolute_path, output_name="\\da
             file_obj.write(selected_dict[path].get('filename'))
             file_obj.write("," + selected_dict[path].get('relative path'))
             for header in selected_dict[path].get('headers'):
-                file_obj.write("," + header)
+                if header in headers:  # Has already appeared
+                    header_place = headers.index(header)
+                else:                  # First time
+                    headers.append(header)
+                    header_place = len(headers) + 1
+                file_obj.write("," + header + ":" + "Function_call" + str(header_place) + ":" + "table")   # FORMATTING
             file_obj.write('\n')
-
     file_obj.close()
     print("\nMetadata saved into %s", (absolute_path + output_name))
     print("TOTAL FILES:  %d" % len(selected_dict.keys()))
