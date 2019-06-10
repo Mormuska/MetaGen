@@ -2,7 +2,9 @@ from utils import *
 """ Meta data generator
 
 Generates csv file that includes names and locations of all files, and headers with header types of targeted files
-withing input folder and subfolders bellow it. 
+withing input folder and subfolders bellow it.
+
+Also makes a config file for other programs based on selected folders withing the previous location.
 """
 
 Input_folder = "C:\\Users\\nblomber\\V4InputV4.0.2-UNSW"
@@ -21,5 +23,6 @@ meta_dict = load_types(meta_dict, separator, name_ext)
 # Saving to a file
 meta_save(meta_dict, "C:\\Users\\nblomber")
 
+# Creating configurations file
 selected_list = ["Scenario-Population", "Scenario-Employment", "BaseYearMatrix\\External"]
 selected_dict = make_header_list(meta_dict, selected_list, "C:\\Users\\nblomber")
