@@ -107,8 +107,8 @@ def meta_save(meta_dict, absolute_path, name="\\Meta_data.csv", append=False):
 
 def make_header_list(meta_dict, selected_files, absolute_path, output_name="\\config.txt"):
     """
-    Makes a header list from selected files and relative paths. This way other programs can import necessary headers
-    easily.
+    Makes a config.txt from selected files and relative paths. This way other programs can import necessary headers and
+    properties easily.
 
     OUTPUT FORMAT: Absolute_path,Relative_path,header:placement:table (repeating for all headers)
 
@@ -131,15 +131,17 @@ def make_header_list(meta_dict, selected_files, absolute_path, output_name="\\co
     file_obj = open(path, 'w')
     for path in selected_dict:
         if 'headers' in selected_dict[path]:
-            file_obj.write(selected_dict[path].get('filename'))
+            filename = selected_dict[path].get('filename')
+            file_obj.write(filename)
             file_obj.write("," + selected_dict[path].get('relative path'))
+            table = matcher(path)
             for header in selected_dict[path].get('headers'):
                 if header in headers:  # Has already appeared
                     header_place = headers.index(header)
-                else:                  # First time
+                else:  # First time
                     headers.append(header)
                     header_place = len(headers) + 1
-                file_obj.write("," + header + ":" + "Function_call" + str(header_place) + ":" + "table")   # FORMATTING
+                file_obj.write("," + header + ":" + "key_" + header.lower() + ":" + table)  # FORMATTING
             file_obj.write('\n')
     file_obj.close()
     print("\nMetadata saved into %s", (absolute_path + output_name))
@@ -158,3 +160,14 @@ def print_on_console(meta_dict):
         print(meta_dict[f].get('types'), end="\n")
     print("\nTOTAL FILES:  %d" % len(meta_dict.keys()))
     return
+
+
+def matcher(path):
+    # Figures out some of the known table names from paths
+    table = "table"
+    known_tables = ["Trips", "Households", "Persons", "Zones"]
+    for name in known_tables:
+        if name in path:
+            table = name
+            break
+    return table
